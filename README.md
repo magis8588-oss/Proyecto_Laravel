@@ -89,7 +89,7 @@ php artisan serve
 
 ### Panel Administrativo
 - URL: `http://127.0.0.1:8000/login`
-- Usuario: `admin@oftalmo.test`
+- Usuario: `admin@oftalmo.ucaldas.edu.co`
 - Contraseña: `password`
 - Funciones: Gestión de citas, médicos, calendario
 
