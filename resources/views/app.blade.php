@@ -6,8 +6,8 @@
 
         <title inertia>{{ config('app.name', 'Sistema de Citas Oftalmológicas') }}</title>
         
-        <!-- Favicon - Emoji de ojo -->
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁️</text></svg>">
+        <!-- Favicon - Medical eye icon -->
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%233b82f6'/><circle cx='50' cy='50' r='20' fill='white'/><circle cx='50' cy='50' r='10' fill='%233b82f6'/></svg>">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
