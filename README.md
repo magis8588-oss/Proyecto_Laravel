@@ -232,6 +232,25 @@ npm run dev
 Universidad de Caldas - Ingeniería de Sistemas  
 Contacto: admin@oftalmo.ucaldas.edu.co
 
+## 🚀 Despliegue en Producción
+
+Para desplegar este proyecto en un servidor gratuito, consulta la guía completa en:
+
+**[DEPLOYMENT.md](./DEPLOYMENT.md)** - Guía paso a paso para desplegar en Railway (recomendado)
+
+### Resumen rápido:
+1. Crea cuenta en [Railway.app](https://railway.app)
+2. Conecta tu repositorio de GitHub
+3. Agrega PostgreSQL desde Railway
+4. Configura las variables de entorno
+5. ¡Despliega automáticamente!
+
+Railway ofrece:
+- ✅ 500 horas/mes gratis
+- ✅ PostgreSQL incluido
+- ✅ Dominio HTTPS automático
+- ✅ Despliegue continuo desde Git
+
 ## 📄 Licencia
 
 Este proyecto fue desarrollado con fines académicos.  
