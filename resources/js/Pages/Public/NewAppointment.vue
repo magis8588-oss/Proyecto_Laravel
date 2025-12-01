@@ -2,26 +2,26 @@
     <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <header class="bg-white shadow">
             <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <Link :href="`/doctors/${doctor.slug}`" class="text-indigo-600 hover:text-indigo-800 mb-2 inline-block">
+                <Link :href="`/doctors/${doctor.slug}`" class="text-blue-600 hover:text-blue-800 mb-2 inline-block">
                     ← Volver al calendario
                 </Link>
-                <h1 class="text-3xl font-bold text-gray-900">Confirmar Cita</h1>
+                <h1 class="text-3xl font-bold text-gray-900">Confirmar Consulta Oftalmológica</h1>
             </div>
         </header>
 
         <main class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-lg shadow-md p-8">
                 <!-- Appointment Details -->
-                <div class="mb-8 p-4 bg-indigo-50 rounded-lg">
-                    <h2 class="text-xl font-semibold mb-4">Detalles de la cita</h2>
+                <div class="mb-8 p-4 bg-blue-50 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">Detalles de la consulta</h2>
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span class="font-semibold">Médico:</span>
+                            <span class="font-semibold">Oftalmólogo:</span>
                             <p>{{ doctor.name }}</p>
                         </div>
                         <div>
                             <span class="font-semibold">Especialidad:</span>
-                            <p>{{ doctor.specialty }}</p>
+                            <p>{{ doctor.specialty?.name || 'Oftalmología General' }}</p>
                         </div>
                         <div>
                             <span class="font-semibold">Fecha:</span>
@@ -91,9 +91,9 @@
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 font-semibold"
+                                class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 disabled:bg-gray-400 font-semibold"
                             >
-                                {{ form.processing ? 'Procesando...' : 'Confirmar Cita' }}
+                                {{ form.processing ? 'Procesando...' : 'Confirmar Consulta' }}
                             </button>
                             <Link
                                 :href="`/doctors/${doctor.slug}`"
@@ -122,7 +122,7 @@ const form = useForm({
     patient_name: '',
     patient_email: '',
     patient_phone: '',
-    start: props.start
+    start_at: props.start
 });
 
 const formatDate = (dateString) => {

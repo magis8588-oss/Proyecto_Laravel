@@ -29,7 +29,7 @@ class AppointmentConfirmed extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '✓ Cita Confirmada - Oftalmología',
+            subject: '✅ Cita Médica Confirmada',
         );
     }
 
@@ -39,7 +39,7 @@ class AppointmentConfirmed extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.appointments.confirmed',
+            view: 'emails.appointment-confirmed',
         );
     }
 
