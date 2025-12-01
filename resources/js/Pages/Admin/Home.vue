@@ -211,17 +211,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Diálogo de confirmación -->
+        <ConfirmDialog
+            :show="showConfirmDialog"
+            :title="confirmConfig.title"
+            :message="confirmConfig.message"
+            :type="confirmConfig.type"
+            @confirm="confirmAction"
+            @cancel="showConfirmDialog = false"
+        />
     </AppLayout>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
+import ConfirmDialog from '@/Components/ConfirmDialog.vue';
 
 defineProps({
     stats: Object,
     upcomingAppointments: Array,
     doctors: Array
+});
+
+const showConfirmDialog = ref(false);
+const confirmAction = ref(null);
+const confirmConfig = ref({
+    title: '',
+    message: '',
+    type: 'info'
 });
 
 const formatDateTime = (dateString) => {
@@ -236,14 +256,28 @@ const formatDateTime = (dateString) => {
 };
 
 const acceptAppointment = (slug) => {
-    if (confirm('¿Confirmar esta cita?')) {
+    confirmConfig.value = {
+        title: '¿Confirmar esta cita?',
+        message: 'La cita será confirmada y el paciente recibirá un correo de notificación.',
+        type: 'success'
+    };
+    confirmAction.value = () => {
         router.post(`/appointments/${slug}/accept`);
-    }
+        showConfirmDialog.value = false;
+    };
+    showConfirmDialog.value = true;
 };
 
 const rejectAppointment = (slug) => {
-    if (confirm('¿Rechazar esta cita?')) {
+    confirmConfig.value = {
+        title: '¿Rechazar esta cita?',
+        message: 'La cita será rechazada y el paciente recibirá un correo de notificación.',
+        type: 'danger'
+    };
+    confirmAction.value = () => {
         router.post(`/appointments/${slug}/reject`);
-    }
+        showConfirmDialog.value = false;
+    };
+    showConfirmDialog.value = true;
 };
 </script>

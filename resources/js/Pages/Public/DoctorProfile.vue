@@ -18,7 +18,7 @@
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center space-x-3">
+                    <Link href="/" class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
                         <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -31,12 +31,12 @@
                             </h1>
                             <p class="text-xs text-gray-600">Sistema de Agendamiento</p>
                         </div>
-                    </div>
-                    <Link href="/" class="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    </Link>
+                    <Link href="/" class="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium group">
+                        <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
-                        <span class="hidden sm:inline">Volver</span>
+                        <span>Volver</span>
                     </Link>
                 </div>
             </div>
@@ -121,6 +121,26 @@
                             </button>
                         </div>
                     </div>
+                    <!-- Leyenda de Colores -->
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 mt-3 pt-3 border-t border-white/20 text-white text-xs sm:text-sm">
+                        <span class="font-medium">Leyenda:</span>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded bg-green-500"></div>
+                            <span>Disponible</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded bg-yellow-400"></div>
+                            <span>Pendiente</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded bg-red-500"></div>
+                            <span>Ocupado</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded bg-gray-400"></div>
+                            <span>Pasado</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Calendar Grid - Desktop -->
@@ -141,11 +161,21 @@
                             <div class="p-2 space-y-1.5 max-h-96 overflow-y-auto custom-scrollbar">
                                 <button
                                     v-for="slot in day.availableSlots"
-                                    :key="slot"
-                                    @click="selectSlot(day.fullDate, slot)"
-                                    class="w-full text-xs px-2.5 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+                                    :key="slot.time"
+                                    @click="slot.available ? selectSlot(day.fullDate, slot.time) : null"
+                                    :disabled="!slot.available"
+                                    class="w-full text-xs px-2.5 py-2 rounded-lg transition-all font-medium shadow-sm relative"
+                                    :class="{
+                                        'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 hover:shadow-md transform hover:scale-105 cursor-pointer': slot.status === 'available' && !slot.isPast,
+                                        'bg-gradient-to-r from-yellow-400 to-amber-500 text-white cursor-not-allowed opacity-90': slot.status === 'pending',
+                                        'bg-gradient-to-r from-red-500 to-rose-600 text-white cursor-not-allowed opacity-90': slot.status === 'confirmed',
+                                        'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60': slot.isPast
+                                    }"
                                 >
-                                    {{ slot }}
+                                    <div>{{ slot.time }}</div>
+                                    <div v-if="slot.status === 'pending'" class="text-[9px] mt-0.5">Pendiente</div>
+                                    <div v-else-if="slot.status === 'confirmed'" class="text-[9px] mt-0.5">Ocupado</div>
+                                    <div v-else-if="slot.isPast" class="text-[9px] mt-0.5">Pasado</div>
                                 </button>
                                 <div v-if="day.availableSlots.length === 0" class="text-xs text-gray-400 text-center py-4">
                                     <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,19 +205,29 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full" :class="day.availableSlots.length > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
-                                {{ day.availableSlots.length }} espacios
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full" :class="day.availableSlots.filter(s => s.available).length > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
+                                {{ day.availableSlots.filter(s => s.available).length }} disponibles
                             </span>
                         </div>
                         <div class="p-3">
                             <div v-if="day.availableSlots.length > 0" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                                 <button
                                     v-for="slot in day.availableSlots"
-                                    :key="slot"
-                                    @click="selectSlot(day.fullDate, slot)"
-                                    class="text-sm px-3 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all font-semibold shadow-sm hover:shadow-md"
+                                    :key="slot.time"
+                                    @click="slot.available ? selectSlot(day.fullDate, slot.time) : null"
+                                    :disabled="!slot.available"
+                                    class="text-sm px-3 py-2.5 rounded-lg transition-all font-semibold shadow-sm relative"
+                                    :class="{
+                                        'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 hover:shadow-md cursor-pointer': slot.status === 'available' && !slot.isPast,
+                                        'bg-gradient-to-r from-yellow-400 to-amber-500 text-white cursor-not-allowed opacity-90': slot.status === 'pending',
+                                        'bg-gradient-to-r from-red-500 to-rose-600 text-white cursor-not-allowed opacity-90': slot.status === 'confirmed',
+                                        'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60': slot.isPast
+                                    }"
                                 >
-                                    {{ slot }}
+                                    <div>{{ slot.time }}</div>
+                                    <div v-if="slot.status === 'pending'" class="text-[10px] mt-1">Pendiente</div>
+                                    <div v-else-if="slot.status === 'confirmed'" class="text-[10px] mt-1">Ocupado</div>
+                                    <div v-else-if="slot.isPast" class="text-[10px] mt-1">Pasado</div>
                                 </button>
                             </div>
                             <div v-else class="text-center py-6">
@@ -447,7 +487,13 @@ const generateTimeSlots = (schedule, date) => {
     if (!schedule || schedule.length === 0) return [];
     
     const now = new Date();
-    if (date < now) return [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+    
+    // Si la fecha es anterior a hoy, no mostrar horarios
+    if (checkDate < today) return [];
     
     const slots = [];
     const duration = 20; // minutos
@@ -463,12 +509,18 @@ const generateTimeSlots = (schedule, date) => {
         end.setHours(endHour, endMin, 0, 0);
         
         while (current < end) {
-            if (current > now) {
-                const timeString = current.toTimeString().slice(0, 5);
-                if (!isSlotBooked(date, timeString)) {
-                    slots.push(timeString);
-                }
-            }
+            const timeString = current.toTimeString().slice(0, 5);
+            const isPast = current <= now;
+            const appointmentStatus = getSlotStatus(date, timeString);
+            
+            // Agregar el slot con su información de estado
+            slots.push({
+                time: timeString,
+                isPast: isPast,
+                status: appointmentStatus, // 'available', 'pending', 'confirmed'
+                available: !isPast && appointmentStatus === 'available'
+            });
+            
             current = new Date(current.getTime() + duration * 60000);
         }
     });
@@ -476,10 +528,47 @@ const generateTimeSlots = (schedule, date) => {
     return slots;
 };
 
-const isSlotBooked = (date, time) => {
-    // Aquí verificarías contra las citas existentes
-    // Por ahora retornamos false (todos disponibles)
-    return false;
+const getSlotStatus = (date, time) => {
+    if (!props.doctor.appointments || props.doctor.appointments.length === 0) {
+        return 'available';
+    }
+    
+    const [hours, minutes] = time.split(':').map(Number);
+    
+    // Crear timestamp del slot en formato local (sin conversión UTC)
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hourStr = String(hours).padStart(2, '0');
+    const minuteStr = String(minutes).padStart(2, '0');
+    
+    // Crear string en formato SQL local
+    const slotStartStr = `${year}-${month}-${day} ${hourStr}:${minuteStr}:00`;
+    
+    const duration = 20; // minutos
+    const slotEndDate = new Date(date);
+    slotEndDate.setHours(hours, minutes + duration, 0, 0);
+    const slotEndStr = `${year}-${month}-${day} ${String(slotEndDate.getHours()).padStart(2, '0')}:${String(slotEndDate.getMinutes()).padStart(2, '0')}:00`;
+    
+    // Buscar si hay alguna cita en este horario
+    for (const appointment of props.doctor.appointments) {
+        // Las citas vienen de la DB como strings 'YYYY-MM-DD HH:MM:SS'
+        const appointmentStart = appointment.start;
+        const appointmentEnd = appointment.end;
+        
+        // Comparar directamente los strings en formato SQL (funciona porque están en el mismo formato)
+        // Verificar si hay superposición: slot.start < appointment.end && slot.end > appointment.start
+        if (slotStartStr < appointmentEnd && slotEndStr > appointmentStart) {
+            // Retornar el estado según el status de la cita
+            if (appointment.status === 'pending') {
+                return 'pending';
+            } else if (appointment.status === 'confirmed') {
+                return 'confirmed';
+            }
+        }
+    }
+    
+    return 'available';
 };
 
 // Estado del modal
@@ -525,9 +614,13 @@ const submitAppointment = async () => {
     isSubmitting.value = true;
     
     try {
+        // Formatear la fecha sin timezone para evitar problemas de zona horaria
+        const date = selectedSlot.value.date;
+        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:00`;
+        
         await router.post('/appointments', {
             doctor_id: props.doctor.id,
-            start: selectedSlot.value.date.toISOString(),
+            start: formattedDate,
             patient_name: appointmentForm.value.patient_name,
             patient_email: appointmentForm.value.patient_email,
             patient_phone: appointmentForm.value.patient_phone

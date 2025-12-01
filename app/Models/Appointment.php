@@ -21,9 +21,11 @@ class Appointment extends Model
         'status'
     ];
 
+    // No convertir a datetime para evitar problemas de timezone
+    // Las fechas se manejan como strings en formato 'Y-m-d H:i:s'
     protected $casts = [
-        'start' => 'datetime',
-        'end' => 'datetime',
+        'start' => 'string',
+        'end' => 'string',
     ];
 
     public static function boot()

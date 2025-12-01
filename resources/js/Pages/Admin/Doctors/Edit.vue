@@ -152,15 +152,35 @@
                 </div>
             </div>
         </div>
+
+        <!-- Diálogo de confirmación -->
+        <ConfirmDialog
+            :show="showConfirmDialog"
+            :title="confirmConfig.title"
+            :message="confirmConfig.message"
+            :type="confirmConfig.type"
+            @confirm="confirmAction"
+            @cancel="showConfirmDialog = false"
+        />
     </AppLayout>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
+import ConfirmDialog from '@/Components/ConfirmDialog.vue';
 
 const props = defineProps({
     doctor: Object
+});
+
+const showConfirmDialog = ref(false);
+const confirmAction = ref(null);
+const confirmConfig = ref({
+    title: '',
+    message: '',
+    type: 'info'
 });
 
 const daysOfWeek = [
@@ -206,12 +226,15 @@ const submit = () => {
 };
 
 const deleteDoctor = () => {
-    if (confirm(`¿Estás seguro de eliminar al médico ${props.doctor.name}? Esta acción no se puede deshacer.`)) {
-        router.delete(`/admin/doctors/${props.doctor.slug}`, {
-            onSuccess: () => {
-                
-            }
-        });
-    }
+    confirmConfig.value = {
+        title: 'Eliminar Médico',
+        message: `¿Estás seguro de eliminar al médico ${props.doctor.name}? Esta acción no se puede deshacer.`,
+        type: 'danger'
+    };
+    confirmAction.value = () => {
+        router.delete(`/admin/doctors/${props.doctor.slug}`);
+        showConfirmDialog.value = false;
+    };
+    showConfirmDialog.value = true;
 };
 </script>
