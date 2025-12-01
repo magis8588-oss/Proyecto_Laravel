@@ -4,8 +4,8 @@
         <header class="bg-white shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Sistema de Agendamiento</h1>
-                    <p class="mt-1 text-sm text-gray-600">Oftalmología - Reserva tu cita</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Clínica Oftalmológica UCaldas</h1>
+                    <p class="mt-1 text-sm text-gray-600">Centro Especializado en Salud Visual</p>
                 </div>
                 <a v-if="$page.props.auth.user" href="/home" class="text-indigo-600 hover:text-indigo-800">
                     Panel Admin
@@ -25,8 +25,8 @@
 
             <!-- Intro -->
             <div class="text-center mb-12">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Selecciona un médico para agendar tu cita</h2>
-                <p class="text-gray-600">Contamos con especialistas en oftalmología disponibles para atenderte</p>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Nuestros Oftalmólogos Especialistas</h2>
+                <p class="text-gray-600">Equipo médico altamente calificado en salud visual y ocular</p>
             </div>
 
             <!-- Doctors Grid -->
@@ -45,12 +45,12 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-semibold text-gray-900">{{ doctor.name }}</h3>
-                                <p class="text-sm text-gray-600">{{ doctor.specialty }}</p>
+                                <p class="text-sm text-gray-600">{{ doctor.specialty?.name || 'Oftalmología General' }}</p>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <p class="text-sm text-gray-700 mb-2"><strong>Horarios disponibles:</strong></p>
+                            <p class="text-sm text-gray-700 mb-2"><strong>Agenda de consultas:</strong></p>
                             <div class="text-xs text-gray-600 space-y-1">
                                 <div v-for="(schedule, day) in doctor.weekly_schedule" :key="day">
                                     <span v-if="schedule && schedule.length > 0" class="capitalize">
@@ -66,9 +66,9 @@
 
                         <Link 
                             :href="`/doctors/${doctor.slug}`"
-                            class="block w-full text-center bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
+                            class="block w-full text-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                         >
-                            Ver disponibilidad y agendar
+                            Ver agenda y agendar consulta
                         </Link>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
         <footer class="bg-white mt-12">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <p class="text-center text-gray-600 text-sm">
-                    © {{ new Date().getFullYear() }} Sistema de Agendamiento Oftalmológico
+                    © {{ new Date().getFullYear() }} Clínica Oftalmológica UCaldas - Centro Especializado en Salud Visual
                 </p>
             </div>
         </footer>

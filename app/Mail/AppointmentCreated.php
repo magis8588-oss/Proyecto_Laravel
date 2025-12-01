@@ -29,7 +29,7 @@ class AppointmentCreated extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Solicitud de Cita Recibida - Oftalmología',
+            subject: 'Cita Médica Creada - Pendiente de Confirmación',
         );
     }
 
@@ -39,7 +39,7 @@ class AppointmentCreated extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.appointments.created',
+            view: 'emails.appointment-created',
         );
     }
 

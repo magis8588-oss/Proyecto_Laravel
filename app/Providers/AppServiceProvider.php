@@ -2,32 +2,25 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL; // <-- importa esto
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Session;
-use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        Inertia::share([
-            'flash' => function () {
-                return [
-                    'success' => Session::get('success'),
-                    'error' => Session::get('error'),
-                ];
-            },
-        ]);
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+
+            // opcional: si APP_URL está puesto, fija también el host/base
+            if (config('app.url')) {
+                URL::forceRootUrl(config('app.url'));
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
     <AppLayout title="Panel Administrativo">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Panel de Administración
+                Panel Administrativo - Clínica Oftalmológica
             </h2>
         </template>
 
@@ -16,19 +16,19 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
-                        <div class="text-sm font-medium text-gray-500">Citas Pendientes</div>
+                        <div class="text-sm font-medium text-gray-500">Consultas Pendientes</div>
                         <div class="mt-2 text-3xl font-semibold text-yellow-600">{{ stats.pending }}</div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
-                        <div class="text-sm font-medium text-gray-500">Citas Confirmadas</div>
+                        <div class="text-sm font-medium text-gray-500">Consultas Confirmadas</div>
                         <div class="mt-2 text-3xl font-semibold text-green-600">{{ stats.confirmed }}</div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
-                        <div class="text-sm font-medium text-gray-500">Citas Completadas</div>
+                        <div class="text-sm font-medium text-gray-500">Consultas Completadas</div>
                         <div class="mt-2 text-3xl font-semibold text-blue-600">{{ stats.completed }}</div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
-                        <div class="text-sm font-medium text-gray-500">Citas Rechazadas</div>
+                        <div class="text-sm font-medium text-gray-500">Consultas Canceladas</div>
                         <div class="mt-2 text-3xl font-semibold text-red-600">{{ stats.rejected }}</div>
                     </div>
                 </div>
@@ -36,23 +36,23 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <Link href="/appointments" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-semibold mb-2">Gestionar Citas</h3>
-                        <p class="text-gray-600 text-sm">Ver, aprobar o rechazar citas pendientes</p>
+                        <h3 class="text-lg font-semibold mb-2">Gestionar Consultas</h3>
+                        <p class="text-gray-600 text-sm">Ver, aprobar o cancelar consultas pendientes</p>
                     </Link>
                     <Link href="/calendar" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-semibold mb-2">Calendario</h3>
                         <p class="text-gray-600 text-sm">Vista semanal de citas por médico</p>
                     </Link>
                     <Link href="/admin/doctors" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-semibold mb-2">Médicos</h3>
-                        <p class="text-gray-600 text-sm">Administrar médicos y horarios</p>
+                        <h3 class="text-lg font-semibold mb-2">Oftalmólogos</h3>
+                        <p class="text-gray-600 text-sm">Administrar especialistas y horarios</p>
                     </Link>
                 </div>
 
                 
                 <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                     <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold">Próximas Citas</h3>
+                        <h3 class="text-lg font-semibold">Próximas Consultas</h3>
                     </div>
                     <div class="divide-y divide-gray-200">
                         <div 
@@ -72,12 +72,14 @@
                                         >
                                             {{ appointment.status === 'pending' ? 'Pendiente' : 'Confirmada' }}
                                         </span>
-                                        <span class="text-sm font-medium">{{ appointment.doctor.name }}</span>
+                                        <span class="text-sm font-medium">
+                                            {{ appointment.doctor.name }} - {{ appointment.doctor.specialty?.name }}
+                                        </span>
                                     </div>
                                     <p class="text-gray-900 font-semibold">{{ appointment.patient_name }}</p>
                                     <p class="text-sm text-gray-600">{{ appointment.patient_email }}</p>
                                     <p class="text-sm text-gray-600 mt-1">
-                                        {{ formatDateTime(appointment.start) }}
+                                        {{ formatDateTime(appointment.start_at) }}
                                     </p>
                                 </div>
                                 <div v-if="appointment.status === 'pending'" class="flex gap-2">
@@ -97,7 +99,7 @@
                             </div>
                         </div>
                         <div v-if="upcomingAppointments.length === 0" class="p-6 text-center text-gray-500">
-                            No hay citas próximas
+                            No hay consultas próximas
                         </div>
                     </div>
                 </div>

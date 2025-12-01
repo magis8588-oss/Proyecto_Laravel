@@ -6,125 +6,114 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\AppointmentConfirmed;
-use App\Mail\AppointmentRejected;
+use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
+    /**
+     * Display a listing of appointments
+     */
     public function index(Request $request)
     {
-        $query = Appointment::with('doctor')->orderBy('start', 'desc');
+        $query = Appointment::with(['doctor']);
 
-        
+        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
+        // Filter by doctor
         if ($request->filled('doctor')) {
-            $query->whereHas('doctor', function ($q) use ($request) {
-                $q->where('slug', $request->doctor);
-            });
+            $query->where('doctor_id', $request->doctor);
         }
 
-        $appointments = $query->paginate(20);
-        $doctors = Doctor::active()->get();
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('start_time', '>=', $request->start_date);
+        }
 
-        return inertia('Admin/Appointments/Index', [
+        if ($request->filled('end_date')) {
+            $query->whereDate('start_time', '<=', $request->end_date);
+        }
+
+        // Order by appointment date
+        $query->orderBy('start_time', 'desc');
+
+        // Paginate results
+        $appointments = $query->paginate(15)->withQueryString();
+
+        // Get all doctors for filter dropdown
+        $doctors = Doctor::where('is_active', true)->get();
+
+        return Inertia::render('Admin/Appointments/Index', [
             'appointments' => $appointments,
             'doctors' => $doctors,
-            'filters' => $request->only(['status', 'doctor']),
+            'filters' => $request->only(['status', 'doctor', 'start_date', 'end_date'])
         ]);
     }
 
+    /**
+     * Display the specified appointment
+     */
     public function show(Appointment $appointment)
     {
-        $appointment->load('doctor');
-        
-        return inertia('Admin/Appointments/Show', [
-            'appointment' => $appointment,
+        $appointment->load(['doctor']);
+
+        return Inertia::render('Admin/Appointments/Show', [
+            'appointment' => $appointment
         ]);
     }
 
-    public function edit(Appointment $appointment)
+    /**
+     * Accept/Confirm an appointment
+     */
+    public function accept(Request $request, Appointment $appointment)
     {
-        $appointment->load('doctor');
-        $doctors = Doctor::active()->get();
+        if ($appointment->status !== 'pending') {
+            return back()->with('error', 'Solo se pueden confirmar citas pendientes.');
+        }
 
-        return inertia('Admin/Appointments/Edit', [
-            'appointment' => $appointment,
-            'doctors' => $doctors,
-        ]);
-    }
-
-    public function update(Request $request, Appointment $appointment)
-    {
         $validated = $request->validate([
-            'patient_name' => 'required|string|max:255',
-            'patient_email' => 'required|email',
-            'patient_phone' => 'nullable|string|max:20',
-            'status' => 'required|in:pending,confirmed,completed,rejected',
+            'notes' => 'nullable|string|max:1000'
         ]);
 
-        $appointment->update($validated);
+        $appointment->confirm($validated['notes'] ?? null);
 
         return redirect()->route('admin.appointments.index')
-            ->with('success', 'Cita actualizada exitosamente.');
+            ->with('success', 'La cita ha sido confirmada y se ha enviado un correo al paciente.');
     }
 
-    public function destroy(Appointment $appointment)
+    /**
+     * Reject an appointment
+     */
+    public function reject(Request $request, Appointment $appointment)
     {
-        $appointment->delete();
+        if ($appointment->status !== 'pending') {
+            return back()->with('error', 'Solo se pueden rechazar citas pendientes.');
+        }
+
+        $validated = $request->validate([
+            'notes' => 'required|string|max:1000'
+        ]);
+
+        $appointment->reject($validated['notes']);
 
         return redirect()->route('admin.appointments.index')
-            ->with('success', 'Cita eliminada exitosamente.');
+            ->with('success', 'La cita ha sido rechazada y se ha notificado al paciente.');
     }
 
-    public function accept(Appointment $appointment)
+    /**
+     * Cancel an appointment
+     */
+    public function cancel(Request $request, Appointment $appointment)
     {
-        if ($appointment->status !== 'pending') {
-            return back()->withErrors(['error' => 'Solo se pueden aceptar citas pendientes.']);
+        if (!in_array($appointment->status, ['pending', 'confirmed'])) {
+            return back()->with('error', 'Solo se pueden cancelar citas pendientes o confirmadas.');
         }
 
-        $appointment->status = 'confirmed';
-        $appointment->save();
+        $appointment->cancel();
 
-        try {
-            Mail::to($appointment->patient_email)->send(new AppointmentConfirmed($appointment));
-        } catch (\Exception $e) {
-            \Log::error('Failed to send confirmation email: ' . $e->getMessage());
-        }
-
-        return back()->with('success', 'Cita aceptada y confirmación enviada al paciente.');
-    }
-
-    public function reject(Appointment $appointment)
-    {
-        if ($appointment->status !== 'pending') {
-            return back()->withErrors(['error' => 'Solo se pueden rechazar citas pendientes.']);
-        }
-
-        $appointment->status = 'rejected';
-        $appointment->save();
-
-        try {
-            Mail::to($appointment->patient_email)->send(new AppointmentRejected($appointment));
-        } catch (\Exception $e) {
-            \Log::error('Failed to send rejection email: ' . $e->getMessage());
-        }
-
-        return back()->with('success', 'Cita rechazada y notificación enviada al paciente.');
-    }
-
-    public function complete(Appointment $appointment)
-    {
-        if ($appointment->status !== 'confirmed') {
-            return back()->withErrors(['error' => 'Solo se pueden completar citas confirmadas.']);
-        }
-
-        $appointment->status = 'completed';
-        $appointment->save();
-
-        return back()->with('success', 'Cita marcada como completada.');
+        return redirect()->route('admin.appointments.index')
+            ->with('success', 'La cita ha sido cancelada exitosamente.');
     }
 }
