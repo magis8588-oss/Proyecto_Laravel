@@ -85,6 +85,9 @@ class PublicController extends Controller
             'status' => 'pending',
         ]);
 
+        // Cargar la relación doctor antes de enviar el correo
+        $appointment->load('doctor');
+
         
         try {
             Mail::to($appointment->patient_email)->send(new AppointmentCreated($appointment));

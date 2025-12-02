@@ -19,6 +19,32 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@oftalmo.ucaldas.edu.co',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
+            'role' => 'admin',
+        ]);
+
+        
+        $doctorUser1 = User::create([
+            'name' => 'Dr. Juan Pérez',
+            'email' => 'juan.perez@oftalmo.ucaldas.edu.co',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'role' => 'doctor',
+        ]);
+
+        $doctorUser2 = User::create([
+            'name' => 'Dra. María García',
+            'email' => 'maria.garcia@oftalmo.ucaldas.edu.co',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'role' => 'doctor',
+        ]);
+
+        $doctorUser3 = User::create([
+            'name' => 'Dr. Carlos Rodríguez',
+            'email' => 'carlos.rodriguez@oftalmo.ucaldas.edu.co',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'role' => 'doctor',
         ]);
 
         
@@ -103,6 +129,7 @@ class DatabaseSeeder extends Seeder
             'specialty' => 'Oftalmología',
             'weekly_schedule' => $schedule1,
             'active' => true,
+            'user_id' => $doctorUser1->id,
         ]);
 
         $doctor2 = Doctor::create([
@@ -111,6 +138,7 @@ class DatabaseSeeder extends Seeder
             'specialty' => 'Oftalmología',
             'weekly_schedule' => $schedule2,
             'active' => true,
+            'user_id' => $doctorUser2->id,
         ]);
 
         $doctor3 = Doctor::create([
@@ -119,6 +147,7 @@ class DatabaseSeeder extends Seeder
             'specialty' => 'Oftalmología',
             'weekly_schedule' => $schedule3,
             'active' => true,
+            'user_id' => $doctorUser3->id,
         ]);
 
         

@@ -21,11 +21,10 @@ class Appointment extends Model
         'status'
     ];
 
-    // No convertir a datetime para evitar problemas de timezone
-    // Las fechas se manejan como strings en formato 'Y-m-d H:i:s'
+    // Convertir a datetime para que funcionen los métodos de Carbon en los emails
     protected $casts = [
-        'start' => 'string',
-        'end' => 'string',
+        'start' => 'datetime',
+        'end' => 'datetime',
     ];
 
     public static function boot()

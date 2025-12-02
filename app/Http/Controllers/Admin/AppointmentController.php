@@ -89,6 +89,9 @@ class AppointmentController extends Controller
         $appointment->status = 'confirmed';
         $appointment->save();
 
+        // Cargar la relación doctor antes de enviar el correo
+        $appointment->load('doctor');
+
         try {
             Mail::to($appointment->patient_email)->send(new AppointmentConfirmed($appointment));
         } catch (\Exception $e) {
@@ -106,6 +109,9 @@ class AppointmentController extends Controller
 
         $appointment->status = 'rejected';
         $appointment->save();
+
+        // Cargar la relación doctor antes de enviar el correo
+        $appointment->load('doctor');
 
         try {
             Mail::to($appointment->patient_email)->send(new AppointmentRejected($appointment));

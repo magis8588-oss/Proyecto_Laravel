@@ -47,7 +47,7 @@ const submit = () => {
                         </div>
                     </div>
                     <h1 class="text-2xl font-bold text-gray-900 mb-2">Clínica Oftalmológica</h1>
-                    <p class="text-sm text-gray-600">Iniciar sesión en el panel administrativo</p>
+                    <p class="text-sm text-gray-600">Acceso para administradores y doctores</p>
                 </div>
 
                 <div v-if="status" class="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
@@ -130,8 +130,8 @@ const submit = () => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-                <h2 class="text-4xl font-bold mb-4">Panel Administrativo</h2>
-                <p class="text-xl text-blue-100 mb-8">Gestiona las citas y consultas de tu clínica oftalmológica</p>
+                <h2 class="text-4xl font-bold mb-4">Portal Profesional</h2>
+                <p class="text-xl text-blue-100 mb-8">Acceso para administradores y médicos especialistas</p>
                 <div class="space-y-3 text-left">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
